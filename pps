@@ -1,0 +1,82 @@
+#!/bin/bash
+
+if [ -e pps.config ]; then
+	. pps.config
+	if [ ! -v author ]; then
+		printf 'pps.config must define the `author` variable!'
+		exit 1
+	fi
+else
+	printf 'pps.config does not exist!'
+	exit 1
+fi
+
+silent=false
+infile="$1"
+tmpfile=$(mktemp)
+outfile="${2:-$(mktemp --suffix='.pdf')}"
+
+if [[ "$1" = "--inplace" ]]; then
+    # Assumes there will never be a file called "--inplace" (a reasonable assumption?)
+    silent=true
+    infile="$2"
+    outfile="$2.pdf"
+    # "some file.md" -> "some file.md.pdf"
+    # less than perfect, but basename would remove the path as well
+fi
+
+papersize="a4"
+
+#mainfont="Latin Modern Roman" # default: "Latin Modern Roman"
+#sansfont="Latin Modern Sans"
+#monofont="Latin Modern Mono"
+#mathfont="Latin Modern Math" # do not use without careful thought
+# other font possibilities: "URW Bookman L"
+
+#fonts_cmdline=" ${mainfont:+-V mainfont='$mainfont'} ${sansfont:+-V sansfont='$sansfont'} ${monofont:+-V monofont='$monofont'} ${mathfont:+-V mathfont='$mathfont'} "
+
+#echo "Fonts commandline: $fonts_cmdline"
+
+# Process AsciiMath
+node "prepandoc.js" "$infile" "$tmpfile"
+
+# Feed to pandoc
+pandoc \
+    --standalone \
+    --smart \
+    --latex-engine xelatex \
+    -V papersize="$papersize" \
+    -V geometry="margin=1in" \
+    -V author="$author" \
+    -V lang="en-GB" \
+    --from markdown+emoji \
+    --to latex \
+    -o "$outfile" \
+    "$tmpfile"
+
+# Nuke intermediate file
+rm "$tmpfile"
+
+# Show the result to the user
+if [[ "$silent" == "false" ]]; then
+    evince "$outfile"
+fi
+
+# Exit immediately and nuke output if no outfile was given
+if [[ "$2" == "" ]]; then
+    rm "$outfile"
+    exit
+fi
+
+# This fails horribly when using --inplace, so leave it out for now.
+#while true; do
+#    read -ep "Delete rendered file ($outfile)? [y/n] "
+#    if [[ "$REPLY" == "y" ]]; then
+#        rm "$outfile"
+#        exit
+#    elif [[ "$REPLY" == "n" ]]; then
+#        exit
+#    else
+#        echo "Please enter either \"y\" or \"n\"."
+#    fi
+#done
