@@ -38,7 +38,7 @@ papersize="a4"
 #echo "Fonts commandline: $fonts_cmdline"
 
 # Process AsciiMath
-node "prepandoc.js" "$infile" "$tmpfile"
+node "asciimath.js" "$infile" "$tmpfile"
 
 # Feed to pandoc
 pandoc \
