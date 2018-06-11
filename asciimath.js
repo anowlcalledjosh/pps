@@ -1013,3 +1013,31 @@ var AMtranslated = false;
 var AMnoMathML = true;
 
 AMinitSymbols();
+
+const fs = require("fs")
+
+var args = process.argv.slice(2)
+
+console.log("infile: " + args[0])
+console.log("outfile: " + args[1])
+
+var f_str = fs.readFileSync(args[0]).toString()
+
+// Requirements:
+// - math cannot start or end with whitespace (avoids catching "$10 or $20")
+// - character immediately after math cannot be a digit (same reason)
+//
+// This also allows using literal (La)TeX math by putting newlines between the delimiters and the math.
+
+// transform display-style math
+f_str = f_str.replace(/\$\$(?!\s)([^$]*?\S)\$\$(?!\d)/gm, function(match, math, offset, string) {
+    return "$$" + AMTparseAMtoTeX(math) + "$$"
+})
+
+// transform inline math
+config.displaystyle = false
+f_str = f_str.replace(/(?:^|[^$])\$(?!\s)([^$]*?\S)\$(?!\d|\$)/gm, function(match, math, offset, string) {
+  return "$" + AMTparseAMtoTeX(math) + "$"
+})
+
+fs.writeFileSync(args[1], f_str)
