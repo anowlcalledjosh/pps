@@ -27,7 +27,6 @@ THE SOFTWARE.
 //var AMTcgiloc = '';			//set to the URL of your LaTex renderer
 var noMathRender = false;
 
-(function() {
 var config = {
   translateOnLoad: true,		  //true to autotranslate
   mathcolor: "",       	      // defaults to back, or specify any other color
@@ -422,7 +421,6 @@ function AMgetSymbol(str) {
   }
   AMpreviousSymbol=AMcurrentSymbol;
   if (match!=""){
-  	  console.log(AMsymbols[mk]);
     AMcurrentSymbol=AMsymbols[mk].ttype;
     return AMsymbols[mk];
   }
@@ -882,7 +880,6 @@ function AMparseMath(str) {
 	  return document.createTextNode(" ");
   }
   var texstring = AMTparseAMtoTeX(str);
-  console.log(texstring);
   if (typeof mathbg != "undefined" && mathbg=='dark') {
 	  texstring = "\\reverse " + texstring;
   }
@@ -1016,47 +1013,3 @@ var AMtranslated = false;
 var AMnoMathML = true;
 
 AMinitSymbols();
-
-window.translate = translate;
-window.AMTconfig = config;
-window.AMprocessNode = AMprocessNode;
-window.AMparseMath = AMparseMath;
-window.AMTparseMath = AMparseMath;
-window.AMTparseAMtoTeX = AMTparseAMtoTeX;
-
-function generic(){
-  if (config.translateOnLoad) {
-      translate();
-  }
-}
-
-//setup onload function
-if(typeof window.addEventListener != 'undefined'){
-  //.. gecko, safari, konqueror and standard
-  window.addEventListener('load', generic, false);
-}
-else if(typeof document.addEventListener != 'undefined'){
-  //.. opera 7
-  document.addEventListener('load', generic, false);
-}
-else if(typeof window.attachEvent != 'undefined'){
-  //.. win/ie
-  window.attachEvent('onload', generic);
-}else{
-  //.. mac/ie5 and anything else that gets this far
-  //if there's an existing onload function
-  if(typeof window.onload == 'function'){
-    //store it
-    var existing = onload;
-    //add new onload handler
-    window.onload = function(){
-      //call existing onload function
-      existing();
-      //call generic onload function
-      generic();
-    };
-  }else{
-    window.onload = generic;
-  }
-}
-})();
