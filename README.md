@@ -2,11 +2,11 @@
 
 pps converts Markdown documents with embedded LaTeX and AsciiMath to PDF.
 
-## Licence
+## Copyright
 
 [![CC0](https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)][CC0]
 
-pps was written in 2016 by Josh Holland, and rewritten in 2018. The portions of it that were written by myself are made available under [CC0][]; as far as I'm concerned, you may use pps for any purpose.
+pps was written in 2016 by Ash Holland, and rewritten in 2018. The portions of it that were written by myself are made available under [CC0][]; as far as I'm concerned, you may use pps for any purpose.
 
 [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
 
